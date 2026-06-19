@@ -1,0 +1,21 @@
+{
+  "name": "devtinder",
+  "version": "1.0.0",
+  "description": "networking site for devs",
+  "keywords": [
+    "nodejs",
+    "javascript",
+    "reactjs"
+  ],
+  "license": "ISC",
+  "author": "\"Aman K\",",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "start":"node src/app.js",
+    "dev": "nodemon src/app.js"
+    },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

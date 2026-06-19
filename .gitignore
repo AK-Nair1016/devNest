@@ -1,0 +1,4 @@
+#dependencies for node and express
+node_modules
+#document for tasks
+homework.md

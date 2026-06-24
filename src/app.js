@@ -2,27 +2,25 @@ const express = require('express');
 
 const app = express(); // creating instance of express 
 
-//This will only handle GET call
-app.use("/user",
-    [
-        (req,res, next)=>{
-            //route handler
-            console.log("handling the route user1!!")
-            // res.send("Response1!!!") //response
-            next();
-        },
+const adminAuth = require("./middlewares/auth");
 
-        (req, res,next)=>{
-            console.log("Handling the route user 2");
-            next();
-        },
-    ],
-    (req, res,next)=>{
-            console.log("Handling the route user 3");
-            res.send("3rd response")
-            next();
-        },
-);
+
+//Handle Auth Middleware for all HTTP request
+app.use("/admin",adminAuth);
+
+
+//This will only handle GET call
+app.get("/user",(req,res)=>{
+    //route handler
+    res.send("Data sent !!")
+});
+app.get("/admin/getAllData", (req, res) =>{
+    res.send("all data sent")
+});
+app.get("/admin/deleteUser", (req, res)=>{
+    res.send("User Deleted!!")
+})
+
    
 
 app.listen(3000,()=> {

@@ -1,28 +1,34 @@
-const express = require('express');
+const express = require("express");
+const connectDB=require("./config/database") //integrating cluster
+const User= require("./models/user");
 
 const app = express(); // creating instance of express 
 
-const adminAuth = require("./middlewares/auth");
+app.post("/signup",async (req,res)=>{
+    const user=new User({
+        firstName: "Virat",
+        lastName: "Kohli",
+        email: "Virat@testing.com",
+        password: "virat@123",
+    });
+    try{
+        await user.save();
+        res.status(200).send("user added successfully");
+    }catch(err) {
+        res.status(400).send("Error in saving the User"+err.message);
+    }
 
-
-//Handle Auth Middleware for all HTTP request
-app.use("/admin",adminAuth);
-
-
-//This will only handle GET call
-app.get("/user",(req,res)=>{
-    //route handler
-    res.send("Data sent !!")
 });
-app.get("/admin/getAllData", (req, res) =>{
-    res.send("all data sent")
-});
-app.get("/admin/deleteUser", (req, res)=>{
-    res.send("User Deleted!!")
-})
 
-   
+connectDB()
+    .then(() => {
+        console.log("Database connection established...");
+        app.listen(3000,()=> {
+            console.log("Server is successfully listening on port 3000")
+        });
+    })
+    .catch((err) => {
+        console.error("Database cannot be connected!!");
+        console.error(err);
+    });
 
-app.listen(3000,()=> {
-    console.log("Server is successfully listening on port 3000")
-});

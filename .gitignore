@@ -1,4 +1,5 @@
 #dependencies for node and express
 node_modules
+.env
 #document for tasks
 homework.md

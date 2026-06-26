@@ -1,25 +1,60 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+{
+    userName:{
+        type: String,
+        required: true,
+        unique: true,
+    },
     firstName: {
         type: String,
+        required:  true,
+        minlength: 3,
     },
     lastName: {
         type: String,
     },
     email: {
         type: String,
+        required: true,
+        lowercase: true,
+        unique: true,
+        trim: true,
     },
     password: {
         type: String,
+        required: true,
+        minlength:6,
     },
     age: {
         type: Number,
+        min: 15,
     },
     gender: {
         type: String,
+        validate(value){
+            if(!["male","female","others"].includes(value)){
+                throw new Error("Gender data is not valid");
+            }
+        },
     },
-});
+    photoUrl:{
+        type:String,
+        default: "https://pixabay.com/images/search/user%20profile/",
+    },
+    about:{
+        type:String,
+        default: "this is a default about of a user",
+    },
+    skills: {
+        type: [String],
+    },
+},
+{
+    timestamps:true,
+}
+);
 
 const User = mongoose.model("User", userSchema);
 

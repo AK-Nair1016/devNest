@@ -54,10 +54,28 @@ app.get("/feed",async (req,res) => {
 });
 
 //Update the User
-app.patch("/update",async(req,res) => {
-    const userId = req.body.userId;
+app.patch("/users/:userId",async(req,res) => {
+    const userId = req.params?.userId;
     const data= req.body;
     try{
+        const ALLOWED_UPDATES = [
+            "photoUrl",
+            "about",
+            "gender",
+            "skills",
+        ];
+    const isUpdateAllowed =Object.keys(data).every((k)=> 
+        ALLOWED_UPDATES.includes(k)
+    );
+    if(!userId){
+        throw new Error("user not found")
+    }
+    if(!isUpdateAllowed){
+        throw new Error("Updates not allowed");
+    }
+    if(data?.skills.length){
+        throw new Error("Skills cannot be more than 10");
+    }
         const user= await User.findByIdAndUpdate({_id:userId }, data,{
             returnDocument:"after",
             runValidators:true,
@@ -66,7 +84,7 @@ app.patch("/update",async(req,res) => {
         res.send("user updated successfully");
     }
     catch(err){
-        res.status(400).send("cannot find users, update failed"+err.message);
+        res.status(400).send("update failed, "+ err.message);
     }
 });
 

@@ -1,19 +1,35 @@
 const express = require("express");
+const bcrypt=require("bcrypt");
 const connectDB=require("./config/database") //integrating cluster
 const User= require("./models/user");
+const {validateSignUpData}= require("./utils/validation");
 
 const app = express(); 
 app.use(express.json());
 
 app.post("/signup",async (req,res)=>{
-    // creating instance of express 
+    //validation of data
+    validateSignUpData(req);
 
-    const user=new User(req.body);
+    const{firstName,lastName,userName,email, password}=req.body;
+        //Encrpt the password
+        const passwordHash = await bcrypt.hash(password,10)
+        console.log(passwordHash);
+    
+    // creating instance of express 
+    const user=new User({
+        firstName,
+        lastName,
+        email,
+        userName,
+        password:passwordHash
+    })
     try{
+        validateSignUpData(req);
         await user.save();
         res.status(200).send("user added successfully");
     }catch(err) {
-        res.status(400).send("Error in saving the User"+err.message);
+        res.status(400).send("ERROR: "+err.message);
     }
 
 });
@@ -35,7 +51,7 @@ app.get("/users",async (req,res) => {
     }
 });
 
-//Feed API GET /feed- get all the useres from the database
+//Feed API GET /feed- get all the users from the database
 app.get("/feed",async (req,res) => {
     const userEmail=req.body.email;
     try{

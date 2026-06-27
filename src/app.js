@@ -3,6 +3,7 @@ const bcrypt=require("bcrypt");
 const connectDB=require("./config/database") //integrating cluster
 const User= require("./models/user");
 const {validateSignUpData}= require("./utils/validation");
+const { default: isEmail } = require("validator/lib/isEmail");
 
 const app = express(); 
 app.use(express.json());
@@ -32,6 +33,28 @@ app.post("/signup",async (req,res)=>{
         res.status(400).send("ERROR: "+err.message);
     }
 
+});
+app.post("/login",async (req,res)=>{
+    try{
+        const {userName,password}=req.body;
+
+        const user= await User.findOne({userName:userName});
+        if(!user){
+            throw new Error("invalid credentials"); 
+        }
+        const isPasswordValid= await bcrypt.compare(password,user.password);
+        console.log("checking password");
+        if(isPasswordValid){
+                    console.log("done");
+
+            res.send("user logged in successfully");
+        }else{
+            throw new Error("invalid credentials"); 
+        }
+
+    }catch(err){
+        res.status(400).send("ERROR: "+err.message);
+    }
 });
 
 app.get("/users",async (req,res) => {

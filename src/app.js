@@ -73,7 +73,7 @@ app.patch("/users/:userId",async(req,res) => {
     if(!isUpdateAllowed){
         throw new Error("Updates not allowed");
     }
-    if(data?.skills.length){
+    if (data?.skills?.length > 10) {
         throw new Error("Skills cannot be more than 10");
     }
         const user= await User.findByIdAndUpdate({_id:userId }, data,{
@@ -85,6 +85,7 @@ app.patch("/users/:userId",async(req,res) => {
     }
     catch(err){
         res.status(400).send("update failed, "+ err.message);
+        console.log(err);
     }
 });
 

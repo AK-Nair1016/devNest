@@ -10,10 +10,11 @@ const userSchema = new mongoose.Schema(
         unique: true,
         minLength:3,
         maxLength: 20,
-    },
+    }, 
     firstName: {
         type: String,
         required:  true,
+        index: true, 
         minLength:3,
         maxLength: 50,
     },
@@ -50,11 +51,11 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
         type: String,
-        validate(value){
-            if(!["male","female","others"].includes(value)){
-                throw new Error("Gender data is not valid");
-            }
-        },
+        enum: {
+            values:["male", "female", "others"],
+            message: `{VALUE} is a incorrect gender type`
+
+        }
     },
     photoUrl:{
         type:String,
@@ -77,6 +78,8 @@ const userSchema = new mongoose.Schema(
     timestamps:true,
 }
 );
+
+// userSchema.index({firstName:1, lastName:1 });
 userSchema.methods.getJWT = async function(){
     const user=this; //represent instance of the model user eg:elon(firstname)
      const token = jwt.sign({_id:user._id},"DEv@NamasteDev395$@",{
